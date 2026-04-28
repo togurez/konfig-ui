@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+:root[data-theme="dark"] {
+  --bg: 38 40 46;
+  --bg-2: 46 48 55;
+  --bg-3: 56 58 66;
+  --line: 92 93 100;
+  --line-2: 72 74 82;
+  --text: 222 223 228;
+  --text-dim: 154 155 163;
+  --text-faint: 112 113 122;
+  --accent: 217 163 91;      /* oklch(0.75 .14 70) approx */
+  --accent-dim: 161 117 65;
+}
+
+:root[data-theme="light"] {
+  --bg: 250 249 245;
+  --bg-2: 243 241 235;
+  --bg-3: 233 231 223;
+  --line: 190 187 180;
+  --line-2: 215 212 205;
+  --text: 40 42 50;
+  --text-dim: 88 90 98;
+  --text-faint: 138 140 148;
+  --accent: 172 115 50;
+  --accent-dim: 196 144 82;
+}
+
+html, body { background: rgb(var(--bg)); color: rgb(var(--text)); }
+body { font-family: Inter, system-ui, sans-serif; font-size: 13px; -webkit-font-smoothing: antialiased; }
+
+@layer utilities {
+  .accent-bg { background-color: rgb(var(--accent) / 0.12); }
+  .border-dash { border: 1px dashed rgb(var(--line)); }
+  .border-dash-2 { border: 1px dashed rgb(var(--line-2)); }
+}
