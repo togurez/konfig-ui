@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
 import Link from "next/link";
 import { Auth0Provider } from "@auth0/nextjs-auth0";
+import { FilterProvider } from "@/lib/filter-context";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-ui" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning data-theme="dark">
       <body className={`${inter.variable} ${mono.variable} ${caveat.variable} font-ui`}>
         <Auth0Provider>
+        <FilterProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var t=localStorage.getItem('kf_theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
@@ -33,7 +35,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <nav className="flex gap-1 font-sketch text-[17px]">
                 <Link href="/" className="px-3 py-1.5 text-text-dim hover:text-text">List</Link>
                 <Link href="/palette" className="px-3 py-1.5 text-text-dim hover:text-text">Palette</Link>
-                <Link href="/detail" className="px-3 py-1.5 text-text-dim hover:text-text">Detail</Link>
               </nav>
               <div className="ml-auto flex items-center gap-3">
                 <UserMenu />
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="flex-1 min-w-0">{children}</main>
           </div>
         </div>
+        </FilterProvider>
         </Auth0Provider>
       </body>
     </html>

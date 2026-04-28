@@ -90,16 +90,19 @@ export function Chip({
   on,
   children,
   closable,
+  onClick,
 }: {
   on?: boolean;
   children: React.ReactNode;
   closable?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <span
+      onClick={onClick}
       className={`inline-flex items-center gap-1.5 px-2.5 py-[5px] rounded-full font-mono text-[11px] border ${
         on ? "border-solid border-accent text-accent accent-bg" : "border-dashed border-line text-text-dim"
-      }`}
+      } ${onClick ? "cursor-pointer" : ""}`}
     >
       {children}
       {closable && <span className="text-text-faint">×</span>}

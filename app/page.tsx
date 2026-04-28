@@ -5,25 +5,34 @@ import { TYPE_ORDER, fromApi, type SettingType, type Setting } from "@/lib/data"
 import { listSettings } from "@/lib/api";
 import { TypeBadge, KeyCell, ValueCell, Toggle, Check, Chip, Btn, Kbd } from "@/components/Atoms";
 import { EditDrawer } from "@/components/EditDrawer";
+import { useFilters } from "@/lib/filter-context";
+
+const TYPES: SettingType[] = ["feature_flag", "limit", "appearance", "integration", "custom"];
 
 export default function SettingsListPage() {
+  const { typeFilter, activeFilter, page, setPage, applyType, applyActive } = useFilters();
   const [settings, setSettings] = useState<Setting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [focusSetting, setFocusSetting] = useState<Setting | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const perPage = 20;
+  const [total, setTotal] = useState(0);
 
   const load = () => {
     setLoading(true);
     setError(null);
-    listSettings()
-      .then((raw) => setSettings(raw.map(fromApi)))
+    listSettings({ type: typeFilter, active: activeFilter, page, per_page: perPage })
+      .then(({ data, total }) => {
+        setSettings(data.map(fromApi));
+        setTotal(total);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect(load, [typeFilter, activeFilter, page]);
 
   const byType = {} as Record<SettingType, Setting[]>;
   settings.forEach((s) => {
@@ -58,7 +67,7 @@ export default function SettingsListPage() {
           <div className="font-sketch text-[22px] text-text">
             Settings{" "}
             <span className="text-text-dim text-[14px] font-mono ml-2.5">
-              {loading ? "…" : `${settings.length} keys · ${activeCount} active`}
+              {loading ? "…" : `${total} keys · ${activeCount} active`}
             </span>
           </div>
           <div className="ml-auto flex gap-2">
@@ -78,9 +87,20 @@ export default function SettingsListPage() {
             <span className="text-accent animate-pulse">▌</span>
             <span className="ml-auto"><Kbd>⌘K</Kbd></span>
           </div>
-          <Chip>+ filter</Chip>
+          {TYPES.map((t) => (
+            <Chip key={t} on={typeFilter === t} onClick={() => applyType(typeFilter === t ? undefined : t)}>
+              {t.replace("_", " ")}
+            </Chip>
+          ))}
+          <span
+            onClick={() => applyActive(activeFilter === true ? undefined : true)}
+            className={`font-mono text-[11.5px] border border-dashed px-2.5 py-1 rounded-[3px] cursor-pointer ${
+              activeFilter === true ? "border-accent text-accent" : "border-line text-text-dim"
+            }`}
+          >
+            active only
+          </span>
           <span className="font-mono text-[11.5px] text-text-dim border border-dashed border-line px-2.5 py-1 rounded-[3px]">sort: updated ↓</span>
-          <span className="font-mono text-[11.5px] text-text-dim border border-dashed border-line px-2.5 py-1 rounded-[3px]">group: type</span>
         </div>
 
         {/* Bulk */}
@@ -173,15 +193,28 @@ export default function SettingsListPage() {
           })}
         </div>
 
-        <div className="flex items-center gap-1.5 px-5 py-3.5 border-t border-dashed border-line-2 font-mono text-[11.5px] text-text-dim">
-          <span>Showing 1–{settings.length} of {settings.length}</span>
-          <span className="flex-1" />
-          <span className="px-2 py-0.5 border border-dashed border-line rounded-[2px]">‹</span>
-          <span className="px-2 py-0.5 border border-solid border-accent text-accent rounded-[2px]">1</span>
-          <span className="px-2 py-0.5 border border-dashed border-line rounded-[2px]">›</span>
-          <span className="ml-2.5">per page</span>
-          <span className="px-2 py-0.5 border border-dashed border-line rounded-[2px]">20</span>
-        </div>
+        {(() => {
+          const totalPages = Math.ceil(total / perPage);
+          const from = total === 0 ? 0 : (page - 1) * perPage + 1;
+          const to = Math.min(page * perPage, total);
+          return (
+            <div className="flex items-center gap-1.5 px-5 py-3.5 border-t border-dashed border-line-2 font-mono text-[11.5px] text-text-dim">
+              <span>Showing {from}–{to} of {total}</span>
+              <span className="flex-1" />
+              <span
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className={`px-2 py-0.5 border border-dashed border-line rounded-[2px] ${page <= 1 ? "opacity-30 pointer-events-none" : "cursor-pointer hover:text-text"}`}
+              >‹</span>
+              <span className="px-2 py-0.5 border border-solid border-accent text-accent rounded-[2px]">{page}</span>
+              <span
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className={`px-2 py-0.5 border border-dashed border-line rounded-[2px] ${page >= totalPages ? "opacity-30 pointer-events-none" : "cursor-pointer hover:text-text"}`}
+              >›</span>
+              <span className="ml-2.5">per page</span>
+              <span className="px-2 py-0.5 border border-dashed border-line rounded-[2px]">{perPage}</span>
+            </div>
+          );
+        })()}
       </div>
 
       {drawerOpen && (
