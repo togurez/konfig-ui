@@ -14,6 +14,9 @@ export interface Setting {
 
 export const TYPE_ORDER: SettingType[] = ["feature_flag", "limit", "appearance", "integration", "custom"];
 
+// Static palette data used by the palette page (no API call needed).
+export const SETTINGS: Setting[] = [];
+
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
@@ -24,14 +27,15 @@ function relativeTime(iso: string): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
+/** Map the GraphQL (camelCase) ApiSetting shape to the local Setting view-model. */
 export function fromApi(s: ApiSetting): Setting {
   return {
     key: s.key,
-    type: s.setting_type as SettingType,
+    type: s.settingType as SettingType,
     value: s.value as Setting["value"],
     desc: s.description,
-    active: s.is_active,
-    updated: relativeTime(s.updated_at),
-    createdAt: s.created_at,
+    active: s.isActive,
+    updated: relativeTime(s.updatedAt),
+    createdAt: s.createdAt,
   };
 }

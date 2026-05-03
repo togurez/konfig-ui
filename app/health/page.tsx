@@ -16,7 +16,7 @@ export default function HealthPage() {
 
   const load = () => {
     setLoading(true);
-    fetch("/api/konfig/health")
+    fetch("/api/facade/health")
       .then((r) => r.json())
       .then((data) => {
         setChecks(Array.isArray(data) ? data : data.checks ?? []);

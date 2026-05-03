@@ -7,6 +7,8 @@ import { UserMenu } from "@/components/UserMenu";
 import Link from "next/link";
 import { Auth0Provider } from "@auth0/nextjs-auth0";
 import { FilterProvider } from "@/lib/filter-context";
+import { ApolloProvider } from "@/components/ApolloProvider";
+import { ClientBootstrap } from "@/components/ClientBootstrap";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-ui" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -23,29 +25,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning data-theme="dark">
       <body className={`${inter.variable} ${mono.variable} ${caveat.variable} font-ui`}>
         <Auth0Provider>
-        <FilterProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('kf_theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
-          }}
-        />
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <header className="flex items-center gap-4 px-5 py-3 border-b border-dashed border-line-2">
-              <nav className="flex gap-1 font-sketch text-[17px]">
-                <Link href="/" className="px-3 py-1.5 text-text-dim hover:text-text">List</Link>
-                <Link href="/palette" className="px-3 py-1.5 text-text-dim hover:text-text">Palette</Link>
-              </nav>
-              <div className="ml-auto flex items-center gap-3">
-                <UserMenu />
-                <ThemeToggle />
+          <ApolloProvider>
+            <FilterProvider>
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `try{var t=localStorage.getItem('kf_theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
+                }}
+              />
+              {/* Fires syncProfile once per session after Auth0 session is established */}
+              <ClientBootstrap />
+              <div className="flex min-h-screen">
+                <Sidebar />
+                <div className="flex-1 flex flex-col min-w-0">
+                  <header className="flex items-center gap-4 px-5 py-3 border-b border-dashed border-line-2">
+                    <nav className="flex gap-1 font-sketch text-[17px]">
+                      <Link href="/" className="px-3 py-1.5 text-text-dim hover:text-text">List</Link>
+                      <Link href="/palette" className="px-3 py-1.5 text-text-dim hover:text-text">Palette</Link>
+                    </nav>
+                    <div className="ml-auto flex items-center gap-3">
+                      <UserMenu />
+                      <ThemeToggle />
+                    </div>
+                  </header>
+                  <main className="flex-1 min-w-0">{children}</main>
+                </div>
               </div>
-            </header>
-            <main className="flex-1 min-w-0">{children}</main>
-          </div>
-        </div>
-        </FilterProvider>
+            </FilterProvider>
+          </ApolloProvider>
         </Auth0Provider>
       </body>
     </html>

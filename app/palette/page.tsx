@@ -1,8 +1,28 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { searchSettings, bulkAction, type ApiSetting } from "@/lib/api";
+import { gql } from "@apollo/client";
+import { apolloClient } from "@/lib/apollo";
+import { bulkAction, type ApiSetting } from "@/lib/api";
 import { TypeBadge, ValueCell, Toggle, Kbd } from "@/components/Atoms";
+
+const SEARCH_SETTINGS = gql`
+  query SearchSettings($q: String, $per_page: Int) {
+    searchSettings(q: $q, per_page: $per_page) {
+      total
+      hidden
+      data {
+        id
+        key
+        settingType
+        value
+        description
+        isActive
+        updatedAt
+      }
+    }
+  }
+`;
 
 const BULK_ACTIONS = [
   { hint: "activate all matching", icon: "~", action: "activate" as const },
@@ -23,11 +43,17 @@ export default function PalettePage() {
 
   const search = useCallback((q: string) => {
     setLoading(true);
-    searchSettings({ q: q || undefined, per_page: 10 })
-      .then((res) => {
-        setResults(res.data);
-        setTotal(res.total);
-        setHidden(res.hidden);
+    apolloClient
+      .query({
+        query: SEARCH_SETTINGS,
+        variables: { q: q || undefined, per_page: 10 },
+      })
+      .then(({ data }) => {
+        const page = data.searchSettings;
+        // Map GQL camelCase back to the shape TypeBadge/ValueCell/Toggle expect
+        setResults(page.data);
+        setTotal(page.total);
+        setHidden(page.hidden);
         setCursor(0);
       })
       .catch(() => {})
@@ -37,13 +63,14 @@ export default function PalettePage() {
   useEffect(() => {
     search("");
     inputRef.current?.focus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => search(query), 120);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [query]);
+  }, [query, search]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") { e.preventDefault(); setCursor((c) => Math.min(c + 1, results.length - 1)); }
@@ -116,9 +143,9 @@ export default function PalettePage() {
                     {i === cursor ? "▸" : ""}
                   </span>
                   <span className="text-text truncate">{r.key}</span>
-                  <TypeBadge t={r.setting_type as any} />
+                  <TypeBadge t={r.settingType} />
                   <ValueCell v={r.value} />
-                  <Toggle on={r.is_active} />
+                  <Toggle on={r.isActive} />
                   <span className={`text-[10.5px] ${i === cursor ? "text-accent" : "text-transparent"}`}>
                     ↵ edit
                   </span>

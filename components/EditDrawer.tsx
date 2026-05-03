@@ -50,17 +50,17 @@ export function EditDrawer({ setting, onClose, onSaved, onDeleted }: Props) {
       if (isNew) {
         await createSetting({
           key,
-          setting_type: type,
+          settingType: type,
           value,
           description: desc || undefined,
-          is_active: active,
+          isActive: active,
         });
       } else {
         await updateSetting(setting.key, {
-          setting_type: type,
+          settingType: type,
           value,
           description: desc || undefined,
-          is_active: active,
+          isActive: active,
         });
       }
       onSaved?.();

@@ -4,8 +4,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/konfig/:path*",
-        destination: `${process.env.KONFIG_API_URL ?? "http://localhost:8089"}/:path*`,
+        source: "/api/facade/:path*",
+        destination: `${process.env.KONFIG_FACADE_URL ?? "http://localhost:4000"}/:path*`,
       },
     ];
   },

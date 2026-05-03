@@ -7,18 +7,19 @@ import { useFilters } from "@/lib/filter-context";
 import type { SettingType } from "@/lib/data";
 
 const items = [
-  { href: "/", label: "Settings", count: "13", section: "Workspace" },
+  { href: "/", label: "Settings", count: "", section: "Workspace" },
+  { href: "/detail", label: "Detail", count: "", section: "Workspace" },
   { href: "/palette", label: "Palette", count: "⌘K", section: "Workspace" },
-  { href: "/health", label: "Health", count: "ok", section: "Workspace" },
+  { href: "/health", label: "Health", count: "", section: "Workspace" },
   { href: "/audit", label: "Audit log", count: "", section: "Workspace" },
 ];
 
 const typeItems = [
-  { label: "feature_flag", count: "4" },
-  { label: "limit", count: "3" },
-  { label: "appearance", count: "2" },
-  { label: "integration", count: "2" },
-  { label: "custom", count: "1" },
+  { label: "feature_flag" },
+  { label: "limit" },
+  { label: "appearance" },
+  { label: "integration" },
+  { label: "custom" },
 ];
 
 export function Sidebar() {
@@ -71,7 +72,6 @@ export function Sidebar() {
           >
             <span className={`w-2.5 h-2.5 ${on ? "bg-accent" : "border border-dashed border-line"}`} />
             {it.label}
-            <span className="ml-auto text-text-faint text-[11px]">{it.count}</span>
           </Link>
         );
       })}
@@ -106,7 +106,6 @@ export function Sidebar() {
           >
             <span className={`w-2.5 h-2.5 ${on ? "bg-accent" : "border border-dashed border-line"}`} />
             {t.label}
-            <span className="ml-auto text-text-faint text-[11px]">{t.count}</span>
           </div>
         );
       })}

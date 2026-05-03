@@ -81,14 +81,14 @@ export default function SettingsListPage() {
       if (!item || typeof item !== "object") { failed++; continue; }
       const s = item as Record<string, unknown>;
       const key = typeof s.key === "string" ? s.key.trim() : "";
-      const setting_type = typeof (s.type ?? s.setting_type) === "string" ? String(s.type ?? s.setting_type) : "";
-      if (!key || !setting_type || s.value === undefined) { failed++; continue; }
+      const settingType = typeof (s.type ?? s.setting_type ?? s.settingType) === "string" ? String(s.type ?? s.setting_type ?? s.settingType) : "";
+      if (!key || !settingType || s.value === undefined) { failed++; continue; }
       try {
-        await updateSetting(key, { setting_type, value: s.value, description: s.description as string | undefined, is_active: s.active as boolean | undefined });
+        await updateSetting(key, { settingType, value: s.value, description: s.description as string | undefined, isActive: (s.active ?? s.isActive) as boolean | undefined });
         loaded++;
       } catch {
         try {
-          await createSetting({ key, setting_type, value: s.value, description: s.description as string | undefined, is_active: s.active as boolean | undefined });
+          await createSetting({ key, settingType, value: s.value, description: s.description as string | undefined, isActive: (s.active ?? s.isActive) as boolean | undefined });
           loaded++;
         } catch {
           failed++;

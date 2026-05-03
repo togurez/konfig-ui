@@ -15,6 +15,11 @@ const ACTION_COLORS: Record<string, string> = {
   bulk_deleted:     "text-red-400 border-red-900",
 };
 
+/** Resolve display name: prefer full name from profile, fall back to raw auth_id. */
+function displayName(entry: AuditEntry): string {
+  return entry.changedByUser?.fullName || entry.changedBy;
+}
+
 export default function AuditLogPage() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [total, setTotal] = useState(0);
@@ -28,10 +33,11 @@ export default function AuditLogPage() {
     setError(null);
     getAuditLog({ page, per_page: perPage })
       .then((res) => { setEntries(res.data); setTotal(res.total); })
-      .catch((e) => setError(e.message))
+      .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, [page]);
 
   const totalPages = Math.ceil(total / perPage);
@@ -81,17 +87,20 @@ export default function AuditLogPage() {
             key={e.id}
             className="grid grid-cols-[160px_120px_1fr_1fr_160px] gap-3.5 px-0 py-2.5 border-b border-dashed border-line-2 items-start font-mono text-[12px]"
           >
-            <span className="text-text-dim text-[11px]">{formatDate(e.changed_at)}</span>
+            <span className="text-text-dim text-[11px]">{formatDate(e.changedAt)}</span>
             <span>
               <span className={`inline-block px-2 py-[2px] rounded-[3px] border text-[10.5px] ${ACTION_COLORS[e.action] ?? "text-text-dim border-line"}`}>
                 {e.action}
               </span>
             </span>
-            <span className="text-text truncate">{e.setting_key}</span>
-            <span className="text-text-dim truncate">{e.changed_by}</span>
+            <span className="text-text truncate">{e.settingKey}</span>
+            {/* Show resolved full name; fall back to raw auth_id if profile not found */}
+            <span className="text-text-dim truncate" title={e.changedBy}>
+              {displayName(e)}
+            </span>
             <span className="text-text-faint text-[11px] truncate">
-              {e.new_value !== null && e.new_value !== undefined
-                ? JSON.stringify(e.new_value).slice(0, 40)
+              {e.newValue !== null && e.newValue !== undefined
+                ? JSON.stringify(e.newValue).slice(0, 40)
                 : "—"}
             </span>
           </div>
