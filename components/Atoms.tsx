@@ -114,10 +114,12 @@ export function Btn({
   variant = "default",
   children,
   onClick,
+  disabled,
 }: {
   variant?: "default" | "primary" | "ghost" | "danger";
   children: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 }) {
   const v =
     variant === "primary"
@@ -130,7 +132,8 @@ export function Btn({
   return (
     <button
       onClick={onClick}
-      className={`font-mono text-[12px] px-3 py-1.5 rounded-[3px] border ${v} transition-colors`}
+      disabled={disabled}
+      className={`font-mono text-[12px] px-3 py-1.5 rounded-[3px] border ${v} transition-colors ${disabled ? "opacity-30 cursor-not-allowed pointer-events-none" : ""}`}
     >
       {children}
     </button>

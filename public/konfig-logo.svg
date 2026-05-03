@@ -1,0 +1,57 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>konfig logo</title>
+  <desc>Dark rounded square with a geometric golden K lettermark above the wordmark "konfig"</desc>
+
+  <defs>
+    <radialGradient id="bgGradL" cx="42%" cy="38%" r="68%" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#2E3037"/>
+      <stop offset="100%" stop-color="#26282E"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="300" height="300" rx="56" fill="url(#bgGradL)"/>
+
+  <!-- Subtle inner border -->
+  <rect x="1.5" y="1.5" width="297" height="297" rx="55" fill="none" stroke="#383A42" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Corner brackets (top-left) -->
+  <path d="M 34 54 L 34 32 L 56 32" fill="none" stroke="#4A4C55" stroke-width="2" stroke-linecap="round"/>
+  <!-- Corner brackets (top-right) -->
+  <path d="M 244 32 L 266 32 L 266 54" fill="none" stroke="#4A4C55" stroke-width="2" stroke-linecap="round"/>
+  <!-- Corner brackets (bottom-left) -->
+  <path d="M 34 246 L 34 268 L 56 268" fill="none" stroke="#4A4C55" stroke-width="2" stroke-linecap="round"/>
+  <!-- Corner brackets (bottom-right) -->
+  <path d="M 266 246 L 266 268 L 244 268" fill="none" stroke="#4A4C55" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Thin separator line above wordmark -->
+  <line x1="110" y1="236" x2="190" y2="236" stroke="#383A42" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- K lettermark (shifted upward to make room for wordmark) -->
+  <!-- Vertical stem -->
+  <line x1="90" y1="50" x2="90" y2="210"
+        stroke="#D9A35B" stroke-width="24" stroke-linecap="round"/>
+  <!-- Upper arm -->
+  <line x1="102" y1="128" x2="214" y2="55"
+        stroke="#D9A35B" stroke-width="24" stroke-linecap="round"/>
+  <!-- Lower arm -->
+  <line x1="102" y1="132" x2="214" y2="205"
+        stroke="#D9A35B" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Accent node dots at arm tips -->
+  <circle cx="214" cy="55" r="8" fill="#EBC47A"/>
+  <circle cx="214" cy="205" r="8" fill="#EBC47A"/>
+
+  <!-- Subtle accent node at stem top -->
+  <circle cx="90" cy="50" r="5" fill="#A17541"/>
+
+  <!-- Wordmark: "konfig" -->
+  <text
+    x="150" y="262"
+    font-family="Inter, system-ui, -apple-system, Helvetica, Arial, sans-serif"
+    font-size="17"
+    font-weight="500"
+    letter-spacing="7"
+    text-anchor="middle"
+    fill="#9A9BA3">konfig</text>
+</svg>

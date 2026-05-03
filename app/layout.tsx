@@ -15,6 +15,7 @@ const caveat = Caveat({ subsets: ["latin"], variable: "--font-sketch" });
 export const metadata: Metadata = {
   title: "Konfig",
   description: "Settings management dashboard",
+  icons: { icon: "/konfig-icon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

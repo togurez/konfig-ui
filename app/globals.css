@@ -4,16 +4,16 @@
 
 :root,
 :root[data-theme="dark"] {
-  --bg: 38 40 46;
-  --bg-2: 46 48 55;
-  --bg-3: 56 58 66;
-  --line: 92 93 100;
-  --line-2: 72 74 82;
-  --text: 222 223 228;
-  --text-dim: 154 155 163;
-  --text-faint: 112 113 122;
-  --accent: 217 163 91;      /* oklch(0.75 .14 70) approx */
-  --accent-dim: 161 117 65;
+  --bg: 28 30 35;
+  --bg-2: 36 38 45;
+  --bg-3: 48 51 60;
+  --line: 100 103 116;
+  --line-2: 72 75 88;
+  --text: 235 236 242;
+  --text-dim: 180 182 192;
+  --text-faint: 130 133 148;
+  --accent: 217 163 91;
+  --accent-dim: 180 130 72;
 }
 
 :root[data-theme="light"] {

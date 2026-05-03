@@ -1,0 +1,55 @@
+<svg width="320" height="100" viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Konfig horizontal logo</title>
+  <desc>Dark rounded rectangle with a geometric K as the first letter of the wordmark Konfig</desc>
+
+  <defs>
+    <radialGradient id="bgH" cx="28%" cy="38%" r="75%" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#2E3037"/>
+      <stop offset="100%" stop-color="#26282E"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="320" height="100" rx="24" fill="url(#bgH)"/>
+  <rect x="1" y="1" width="318" height="98" rx="23" fill="none" stroke="#383A42" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Corner brackets -->
+  <path d="M 14 24 L 14 12 L 26 12" fill="none" stroke="#4A4C55" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 294 12 L 306 12 L 306 24" fill="none" stroke="#4A4C55" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 14 76 L 14 88 L 26 88" fill="none" stroke="#4A4C55" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 294 88 L 306 88 L 306 76" fill="none" stroke="#4A4C55" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!--
+    K mark scaled to match 70px Inter cap-height (~50px).
+    Scale = 50/180 = 0.278. Origin mapped so stem top = (20, 24), stem bottom = (20, 74).
+    x' = x*0.278 - 5,  y' = y*0.278 + 7
+
+    Icon coords → scaled:
+      Stem:      (90, 60)→(90, 240)   = (20, 24)→(20, 74)
+      Upper arm: (102,148)→(214, 65)  = (23, 48)→(55, 25)
+      Lower arm: (102,152)→(214,235)  = (23, 49)→(55, 74)
+  -->
+  <!-- Stem -->
+  <line x1="20" y1="24" x2="20" y2="74"
+        stroke="#D9A35B" stroke-width="7" stroke-linecap="round"/>
+  <!-- Upper arm -->
+  <line x1="23" y1="48" x2="55" y2="25"
+        stroke="#D9A35B" stroke-width="7" stroke-linecap="round"/>
+  <!-- Lower arm -->
+  <line x1="23" y1="49" x2="55" y2="74"
+        stroke="#D9A35B" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Node dots — same language as icon -->
+  <circle cx="55" cy="25" r="2.5" fill="#EBC47A"/>
+  <circle cx="55" cy="74" r="2.5" fill="#EBC47A"/>
+  <circle cx="20" cy="24" r="1.5" fill="#A17541"/>
+
+  <!-- "onfig" flows directly from K — baseline y=74, gap from K right-tip ~3.5px -->
+  <text x="62" y="74"
+        font-family="Inter, system-ui, -apple-system, Helvetica, Arial, sans-serif"
+        font-size="70"
+        font-weight="700"
+        letter-spacing="-1"
+        text-anchor="start"
+        fill="#DEDFE4">onfig</text>
+</svg>

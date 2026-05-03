@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TYPE_ORDER, fromApi, type SettingType, type Setting } from "@/lib/data";
-import { listSettings } from "@/lib/api";
+import { listSettings, createSetting, updateSetting } from "@/lib/api";
 import { TypeBadge, KeyCell, ValueCell, Toggle, Check, Chip, Btn, Kbd } from "@/components/Atoms";
 import { EditDrawer } from "@/components/EditDrawer";
 import { useFilters } from "@/lib/filter-context";
@@ -58,6 +58,62 @@ export default function SettingsListPage() {
   };
 
   const activeCount = settings.filter((s) => s.active).length;
+  const importRef = useRef<HTMLInputElement>(null);
+  const [importReport, setImportReport] = useState<{ loaded: number; failed: number } | null>(null);
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    let items: unknown[];
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      items = Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      setImportReport({ loaded: 0, failed: -1 }); // parse error
+      return;
+    }
+
+    let loaded = 0, failed = 0;
+    for (const item of items) {
+      if (!item || typeof item !== "object") { failed++; continue; }
+      const s = item as Record<string, unknown>;
+      const key = typeof s.key === "string" ? s.key.trim() : "";
+      const setting_type = typeof (s.type ?? s.setting_type) === "string" ? String(s.type ?? s.setting_type) : "";
+      if (!key || !setting_type || s.value === undefined) { failed++; continue; }
+      try {
+        await updateSetting(key, { setting_type, value: s.value, description: s.description as string | undefined, is_active: s.active as boolean | undefined });
+        loaded++;
+      } catch {
+        try {
+          await createSetting({ key, setting_type, value: s.value, description: s.description as string | undefined, is_active: s.active as boolean | undefined });
+          loaded++;
+        } catch {
+          failed++;
+        }
+      }
+    }
+    setImportReport({ loaded, failed });
+    load();
+  };
+
+  const exportSelected = () => {
+    const rows = settings.filter((s) => selected.has(s.key));
+    const json = JSON.stringify(rows.map((s) => ({
+      key: s.key,
+      type: s.type,
+      value: s.value,
+      description: s.desc,
+      active: s.active,
+      updated: s.updated,
+    })), null, 2);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+    a.download = "settings-export.json";
+    a.click();
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-49px)]">
@@ -71,8 +127,11 @@ export default function SettingsListPage() {
             </span>
           </div>
           <div className="ml-auto flex gap-2">
-            <Btn>Import</Btn>
-            <Btn>Export</Btn>
+            <Btn onClick={() => importRef.current?.click()}>Import</Btn>
+            <input ref={importRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+            <Btn disabled={selected.size === 0} onClick={exportSelected}>
+              Export{selected.size > 0 ? ` (${selected.size})` : ""}
+            </Btn>
             <Btn variant="primary" onClick={openNew}>
               + New setting <span className="opacity-70 ml-1">N</span>
             </Btn>
@@ -102,6 +161,20 @@ export default function SettingsListPage() {
           </span>
           <span className="font-mono text-[11.5px] text-text-dim border border-dashed border-line px-2.5 py-1 rounded-[3px]">sort: updated ↓</span>
         </div>
+
+        {/* Import report */}
+        {importReport && (
+          <div className={`flex items-center gap-2.5 px-5 py-2.5 border-b border-dashed border-line-2 font-mono text-[12px] ${importReport.failed === -1 ? "text-red-400" : "text-text-dim"}`}>
+            {importReport.failed === -1
+              ? "Import failed — invalid JSON file."
+              : <>
+                  <span className="text-green-300">✓ {importReport.loaded} loaded</span>
+                  {importReport.failed > 0 && <span className="text-red-400">· {importReport.failed} skipped (invalid)</span>}
+                </>
+            }
+            <button className="ml-auto text-text-faint hover:text-text" onClick={() => setImportReport(null)}>×</button>
+          </div>
+        )}
 
         {/* Bulk */}
         {selected.size > 0 && (
